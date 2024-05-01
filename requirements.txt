@@ -1,4 +1,9 @@
-torch>=1.0.0
-torchvision>=0.2.0
-numpy>=1.0.0
-pandas>=1.0.0
+torch
+torchvision
+pandas
+numpy
+tqdm
+Pillow
+torchvision
+torchvideo
+timm
