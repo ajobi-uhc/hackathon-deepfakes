@@ -7,4 +7,3 @@ Pillow
 torchvision
 timm
 wandb
-os
