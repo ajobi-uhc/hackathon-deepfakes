@@ -145,3 +145,10 @@ for epoch in range(num_epochs):
 
 average_loss = total_loss / len(loader)
 print(f"Epoch {epoch+1} Completed. Average Loss: {average_loss:.4f}\n")
+
+
+torch.save({
+    'model_state_dict': model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': video_loss.item()
+}, 'model_checkpoint.pth')
