@@ -122,7 +122,7 @@ wandb.init(project="deepfake-v1-clip", entity="aryajakkli2002")
 wandb.watch(classifier, log='all', log_freq=10)
 
 print("Start training...")
-latest_checkpoint_path = '../latest_checkpoint.pth'
+latest_checkpoint_path = '../checkpoint_epoch_1_batch_495.pth'
 start_epoch, start_batch_idx, last_loss = load_checkpoint(latest_checkpoint_path, classifier, optimizer, device)
 
 print("loading checkpoint", latest_checkpoint_path)
