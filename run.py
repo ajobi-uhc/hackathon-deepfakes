@@ -4,7 +4,6 @@ from torchvision.transforms.functional import to_tensor, normalize
 from torchvision.io import read_video
 from torch.utils.data import DataLoader, Dataset
 import pandas as pd
-import glob
 import numpy as np
 from tqdm import tqdm
 import json
