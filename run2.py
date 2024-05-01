@@ -47,7 +47,8 @@ class VideoDataset(Dataset):
 
     def __getitem__(self, idx):
         video_filename = self.dataframe.iloc[idx]['Filename']
-        video_path = os.path.join(self.root_dir, video_filename + '.pt')  # Append .pt to load tensor file
+        video_path = f"{self.root_dir}/{video_filename}.pt"
+        #video_path = os.path.join(self.root_dir, video_filename + '.pt')  # Append .pt to load tensor file
         label = self.dataframe.iloc[idx]['label_value']
 
         # Load the tensor directly
