@@ -79,6 +79,21 @@ print("Generating Dataset...")
 dataset = VideoDataset(df_labels, DATASET_VIDEO_PATH, transform=transform)
 loader = DataLoader(dataset, batch_size=2, shuffle=True)
 
+def load_checkpoint(checkpoint_path, classifier, optimizer, device):
+    try:
+        print(f"Loading checkpoint '{checkpoint_path}'")
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+        classifier.load_state_dict(checkpoint['classifier_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        epoch = checkpoint['epoch']
+        batch_idx = checkpoint['batch_idx']
+        loss = checkpoint['loss']
+        print(f"Loaded checkpoint '{checkpoint_path}' (epoch {epoch+1}, batch_idx {batch_idx+1}, loss {loss})")
+        return epoch, batch_idx, loss
+    except:
+        print("No checkpoint found at '{}'".format(checkpoint_path))
+        return 0, 0, float('inf')  # Return default values if no checkpoint exists
+
 print("Fetching model...")
 model = timm.create_model('vit_large_patch14_clip_224', pretrained=True)
 
@@ -107,16 +122,23 @@ wandb.init(project="deepfake-v1-clip", entity="aryajakkli2002")
 wandb.watch(classifier, log='all', log_freq=10)
 
 print("Start training...")
+latest_checkpoint_path = '../latest_checkpoint.pth'
+start_epoch, start_batch_idx, last_loss = load_checkpoint(latest_checkpoint_path, classifier, optimizer, device)
+
+print("loading checkpoint", latest_checkpoint_path)
 num_epochs = 1  # Example epoch count
 losses = []  # List to store all losses for visualization or further analysis
 save_interval = len(loader) // 10
 for epoch in range(num_epochs):
+    for batch_idx, (videos, labels) in progress_bar:
+        if batch_idx < start_batch_idx:
+            continue
     print(f"Epoch {epoch+1}/{num_epochs}")
     total_loss = 0.0
     num_batches = 0
 
     # Wrap the loader with tqdm for a progress bar
-    progress_bar = tqdm(enumerate(loader), total=len(loader), desc="Training", leave=False)
+    progress_bar = tqdm(enumerate(loader, start=start_batch_idx), total=len(loader), desc="Training", leave=False)
 
     for batch_idx, (videos, labels) in progress_bar:
         videos = videos.to(device)  # [batch_size, seq_length, channels, height, width]
@@ -160,8 +182,9 @@ for epoch in range(num_epochs):
             }, checkpoint_path)
             print(f"Saved checkpoint to {checkpoint_path}")
 
-average_loss = total_loss / len(loader)
+average_loss = total_loss / (len(loader) - start_batch_idx)  # Adjust denominator for resumed epoch
 print(f"Epoch {epoch+1} Completed. Average Loss: {average_loss:.4f}\n")
+start_batch_idx = 0
 
 
 torch.save({
