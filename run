@@ -1,2 +1,2 @@
 #!/bin/sh
-srun --partition=interactive10 --gres=gpu:1g.10gb:1 --ntasks=1 --cpus-per-task=4 --reservation=hackathon --time=1:00:00 python run.py
+srun --partition=interactive10 --gres=gpu:1g.10gb:1 --ntasks=1 --cpus-per-task=4 --reservation=hackathon --time=1:00:00 python run2.py
