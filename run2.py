@@ -149,11 +149,12 @@ for epoch in range(num_epochs):
         # Update tqdm postfix to display the loss at the current batch
         progress_bar.set_postfix(loss=f"{current_loss:.4f}")
         if batch_idx % save_interval == 0 or batch_idx == len(loader):
+            print("saving", batch_idx)
             checkpoint_path = f'checkpoint_epoch_{epoch+1}_batch_{batch_idx}.pth'
             torch.save({
                 'epoch': epoch,
                 'batch_idx': batch_idx,
-                'model_state_dict': model.state_dict(),
+                'classifier_state_dict': classifier.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': current_loss,
             }, checkpoint_path)
@@ -164,7 +165,7 @@ print(f"Epoch {epoch+1} Completed. Average Loss: {average_loss:.4f}\n")
 
 
 torch.save({
-    'model_state_dict': model.state_dict(),
+    'classifier_state_dict': classifier.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
     'loss': video_loss.item()
 }, 'model_checkpoint.pth')
