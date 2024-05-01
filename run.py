@@ -48,11 +48,10 @@ class VideoDataset(Dataset):
 
     def __getitem__(self, idx):
         video_filename = self.dataframe.iloc[idx]['Filename']
-        video_path = f"{self.root_dir}/{video_filename}"
+        video_path = os.path.join(self.root_dir, video_filename)
         label = self.dataframe.iloc[idx]['label_value']
         # Read video and extract frames
-        frames = torch.load(video_path)
-        raise Exception(f"{frames.shape}")
+        frames, _, _ = read_video(video_path, pts_unit='sec', start_pts=0, end_pts=10, output_format='TCHW')
         total_frames = len(frames)
         frame_indices = torch.linspace(0, total_frames - 1, steps=self.sequence_length).long()
         selected_frames = frames[frame_indices]
@@ -148,13 +147,14 @@ for epoch in range(num_epochs):
         # Update tqdm postfix to display the loss at the current batch
         progress_bar.set_postfix(loss=f"{current_loss:.4f}")
         if batch_idx % save_interval == 0 or batch_idx == len(loader):
+            print("saving at", batch_idx)
             checkpoint_path = f'checkpoint_epoch_{epoch+1}_batch_{batch_idx}.pth'
             torch.save({
                 'epoch': epoch,
                 'batch_idx': batch_idx,
-                'model_state_dict': model.state_dict(),
+                'classifier_state_dict': classifier.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': current_loss,
+                'loss': loss,
             }, checkpoint_path)
         print(f"Saved checkpoint to {checkpoint_path}")
 
@@ -163,7 +163,7 @@ print(f"Epoch {epoch+1} Completed. Average Loss: {average_loss:.4f}\n")
 
 
 torch.save({
-    'model_state_dict': model.state_dict(),
+    'classifier_state_dict': classifier.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
     'loss': video_loss.item()
 }, 'model_checkpoint.pth')
