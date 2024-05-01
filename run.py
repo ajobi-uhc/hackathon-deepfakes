@@ -14,9 +14,12 @@ import torchvision.transforms.functional as F
 import timm
 import torch.nn as nn
 from torch.optim.lr_scheduler import StepLR
+import wandb
+import torch
+from tqdm import tqdm
 
-DATASET_VIDEO_PATH = "./data/train_dataset"
-DATASET_METADATA_PATH = "./data/train_dataset/metadata.json"
+DATASET_VIDEO_PATH = "../data/train_dataset"
+DATASET_METADATA_PATH = "../data/train_dataset/metadata.json"
 FRAME_RATE = 1  # Frame rate to sample (e.g., 1 frame per second)
 
 # Load video metadata
@@ -91,8 +94,9 @@ criterion = nn.BCEWithLogitsLoss()
 initial_lr = 1e-4
 optimizer = torch.optim.Adam(classifier.parameters(), lr=initial_lr)
 # scheduler = StepLR(optimizer, step_size=5, gamma=0.5)
-import torch
-from tqdm import tqdm
+
+wandb.init(project="deepfake-v1-clip", entity="aryajakkli2002")
+wandb.watch(classifier, log='all', log_freq=10)
 
 num_epochs = 10  # Example epoch count
 losses = []  # List to store all losses for visualization or further analysis
