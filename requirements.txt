@@ -7,4 +7,4 @@ Pillow
 torchvision
 timm
 wandb
-PyAV
+av
