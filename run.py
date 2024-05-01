@@ -104,9 +104,9 @@ wandb.init(project="deepfake-v1-clip", entity="aryajakkli2002")
 wandb.watch(classifier, log='all', log_freq=10)
 
 print("Start training...")
-num_epochs = 10  # Example epoch count
+num_epochs = 1  # Example epoch count
 losses = []  # List to store all losses for visualization or further analysis
-
+save_interval = len(loader) // 10
 for epoch in range(num_epochs):
     print(f"Epoch {epoch+1}/{num_epochs}")
     total_loss = 0.0
@@ -138,10 +138,23 @@ for epoch in range(num_epochs):
         # Record and print the average loss
         current_loss = video_loss.item()
         total_loss += current_loss
+        wandb.log({
+            "batch_loss": current_loss,
+        })
         losses.append(current_loss)
 
         # Update tqdm postfix to display the loss at the current batch
         progress_bar.set_postfix(loss=f"{current_loss:.4f}")
+        if batch_idx % save_interval == 0 or batch_idx == len(loader):
+            checkpoint_path = f'checkpoint_epoch_{epoch+1}_batch_{batch_idx}.pth'
+            torch.save({
+                'epoch': epoch,
+                'batch_idx': batch_idx,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': current_loss,
+            }, checkpoint_path)
+        print(f"Saved checkpoint to {checkpoint_path}")
 
 average_loss = total_loss / len(loader)
 print(f"Epoch {epoch+1} Completed. Average Loss: {average_loss:.4f}\n")
