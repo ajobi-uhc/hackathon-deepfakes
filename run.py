@@ -48,7 +48,7 @@ class VideoDataset(Dataset):
 
     def __getitem__(self, idx):
         video_filename = self.dataframe.iloc[idx]['Filename']
-        video_path = os.path.join(self.root_dir, video_filename)
+        video_path = f"{self.root_dir}/{video_filename}"
         label = self.dataframe.iloc[idx]['label_value']
         # Read video and extract frames
         frames, _, _ = read_video(video_path, pts_unit='sec', start_pts=0, end_pts=10, output_format='TCHW')
