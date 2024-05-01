@@ -8,4 +8,3 @@ torchvision
 torchvideo
 timm
 wandb
-os
