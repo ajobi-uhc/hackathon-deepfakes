@@ -150,7 +150,7 @@ for epoch in range(num_epochs):
         progress_bar.set_postfix(loss=f"{current_loss:.4f}")
         if batch_idx % save_interval == 0 or batch_idx == len(loader):
             print("saving", batch_idx)
-            checkpoint_path = f'checkpoint_epoch_{epoch+1}_batch_{batch_idx}.pth'
+            checkpoint_path = f'../checkpoint_epoch_{epoch+1}_batch_{batch_idx}.pth'
             torch.save({
                 'epoch': epoch,
                 'batch_idx': batch_idx,
@@ -168,4 +168,4 @@ torch.save({
     'classifier_state_dict': classifier.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
     'loss': video_loss.item()
-}, 'model_checkpoint.pth')
+}, '../model_checkpoint.pth')
