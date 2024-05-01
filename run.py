@@ -18,8 +18,9 @@ import wandb
 import torch
 from tqdm import tqdm
 print("Initializing the environment...")
-DATASET_VIDEO_PATH = "../data/train_dataset"
-DATASET_METADATA_PATH = "../data/train_dataset/metadata.json"
+
+DATASET_VIDEO_PATH = "/raid/datasets/hackathon2024/resized_dataset/train_dataset"
+DATASET_METADATA_PATH = "/raid/datasets/hackathon2024/resized_dataset/train_dataset/metadata.json"
 FRAME_RATE = 1  # Frame rate to sample (e.g., 1 frame per second)
 
 # Load video metadata
