@@ -15,8 +15,8 @@ import timm
 import torch.nn as nn
 from torch.optim.lr_scheduler import StepLR
 
-DATASET_VIDEO_PATH = "./data/videos"
-DATASET_METADATA_PATH = "./data/videos/metadata.json"
+DATASET_VIDEO_PATH = "./data/train_dataset"
+DATASET_METADATA_PATH = "./data/train_dataset/metadata.json"
 FRAME_RATE = 1  # Frame rate to sample (e.g., 1 frame per second)
 
 # Load video metadata
