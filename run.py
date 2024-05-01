@@ -17,7 +17,7 @@ from torch.optim.lr_scheduler import StepLR
 import wandb
 import torch
 from tqdm import tqdm
-
+print("Initializing the environment...")
 DATASET_VIDEO_PATH = "../data/train_dataset"
 DATASET_METADATA_PATH = "../data/train_dataset/metadata.json"
 FRAME_RATE = 1  # Frame rate to sample (e.g., 1 frame per second)
@@ -27,7 +27,7 @@ df_labels = pd.read_json(DATASET_METADATA_PATH, orient='index')
 df_labels.reset_index(inplace=True)
 df_labels.columns = ['Filename', 'Label']
 df_labels['label_value'] = np.where(df_labels['Label'] == 'real', 1, 0)
-
+print("Initializing data loader...")
 class VideoDataset(Dataset):
     def __init__(self, dataframe, root_dir, sequence_length=10, transform=None):
         """
@@ -72,9 +72,11 @@ transform = transforms.Compose([
     transforms.ToTensor(),  # Convert the PIL Image to a tensor
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the tensor
 ])
-
+print("Generating Dataset...")
 dataset = VideoDataset(df_labels, DATASET_VIDEO_PATH, transform=transform)
 loader = DataLoader(dataset, batch_size=2, shuffle=True)
+
+print("Fetching model...")
 model = timm.create_model('vit_large_patch14_clip_224', pretrained=True)
 
 model.head = nn.Identity()
@@ -86,7 +88,8 @@ model = model.to(device)
 # Freeze all the parameters in the model to prevent them from being updated during training
 for param in model.parameters():
     param.requires_grad = False
-
+    
+print("Setting the parameters...")
 # Define your classifier that will take the output features from the transformer
 output_dims_of_CLIP = 1024  # This should match the output features of the last layer before the head
 classifier = nn.Linear(in_features=output_dims_of_CLIP, out_features=1).to(device)
@@ -95,10 +98,12 @@ initial_lr = 1e-4
 optimizer = torch.optim.Adam(classifier.parameters(), lr=initial_lr)
 # scheduler = StepLR(optimizer, step_size=5, gamma=0.5)
 
+print("Login in wandb...")
 wandb.login(key='1febd470895e910d7247a866fc41ab6966fe3476')
 wandb.init(project="deepfake-v1-clip", entity="aryajakkli2002")
 wandb.watch(classifier, log='all', log_freq=10)
 
+print("Start training...")
 num_epochs = 10  # Example epoch count
 losses = []  # List to store all losses for visualization or further analysis
 
