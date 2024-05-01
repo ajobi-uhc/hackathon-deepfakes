@@ -5,7 +5,5 @@ numpy
 tqdm
 Pillow
 torchvision
-torchvideo
 timm
 wandb
-gulpio2
