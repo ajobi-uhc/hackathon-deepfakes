@@ -94,7 +94,7 @@ criterion = nn.BCEWithLogitsLoss()
 initial_lr = 1e-4
 optimizer = torch.optim.Adam(classifier.parameters(), lr=initial_lr)
 # scheduler = StepLR(optimizer, step_size=5, gamma=0.5)
-
+wandb.login(key='1febd470895e910d7247a866fc41ab6966fe3476')
 wandb.init(project="deepfake-v1-clip", entity="aryajakkli2002")
 wandb.watch(classifier, log='all', log_freq=10)
 
