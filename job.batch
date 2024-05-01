@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+#SBATCH --job-name=job
+#SBATCH --output=proc.out
+#SBATCH --error=proc.out
+#SBATCH --reservation=hackathon
+
+## For partition: either prod10, prod 20 or prod 40
+#SBATCH --partition=prod10
+
+## For gres: either 1g.10gb:[1:13] for prod10, 2g.20gb:[1:6] for prod20 or 3g.40gb:1 for prod40
+#SBATCH --gres=gpu:1g.10gb:1
+
+## For ntasks and cpus: total requested cpus (ntasks * cpus-per-task) must be in [1: 4 * nMIG] with nMIG = nb_1g.10gb | 2 * nb_2g.20gb | 4 * nb_3g.40gb
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+## Prepare Run
+python3.10 run.py
