@@ -18,8 +18,8 @@ import wandb
 import torch
 from tqdm import tqdm
 print("Initializing the environment...")
-DATASET_VIDEO_PATH = "../data/train_dataset"
-DATASET_METADATA_PATH = "../data/train_dataset/metadata.json"
+DATASET_VIDEO_PATH = "/raid/datasets/hackathon2024/resized_dataset/train_dataset"
+DATASET_METADATA_PATH = "/raid/datasets/hackathon2024/resized_dataset/train_dataset/metadata.json"
 FRAME_RATE = 1  # Frame rate to sample (e.g., 1 frame per second)
 
 # Load video metadata
@@ -47,13 +47,16 @@ class VideoDataset(Dataset):
 
     def __getitem__(self, idx):
         video_filename = self.dataframe.iloc[idx]['Filename']
-        video_path = f"{self.root_dir}/{video_filename}"
+        video_path = os.path.join(self.root_dir, video_filename + '.pt')  # Append .pt to load tensor file
         label = self.dataframe.iloc[idx]['label_value']
-        # Read video and extract frames
-        frames, _, _ = read_video(video_path, pts_unit='sec', start_pts=0, end_pts=10, output_format='TCHW')
-        total_frames = len(frames)
+
+        # Load the tensor directly
+        video_tensor = torch.load(video_path)
+
+        # Select a fixed number of frames if the tensor has more frames than needed
+        total_frames = video_tensor.size(0)
         frame_indices = torch.linspace(0, total_frames - 1, steps=self.sequence_length).long()
-        selected_frames = frames[frame_indices]
+        selected_frames = video_tensor[frame_indices]
 
         processed_frames = []
         for frame in selected_frames:
@@ -67,8 +70,7 @@ class VideoDataset(Dataset):
 # Example of setting up the dataset and dataloader with transformations
 transform = transforms.Compose([
     transforms.ToPILImage(),  # Necessary to convert raw video frame to PIL Image for some transformations
-    transforms.Resize((256, 256)),
-    transforms.CenterCrop((224,224)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),  # Convert the PIL Image to a tensor
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the tensor
 ])
