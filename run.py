@@ -108,6 +108,7 @@ print("Start training...")
 num_epochs = 1  # Example epoch count
 losses = []  # List to store all losses for visualization or further analysis
 save_interval = len(loader) // 10
+print("save interval", save_interval)
 for epoch in range(num_epochs):
     print(f"Epoch {epoch+1}/{num_epochs}")
     total_loss = 0.0
