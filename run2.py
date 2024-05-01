@@ -158,7 +158,7 @@ for epoch in range(num_epochs):
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': current_loss,
             }, checkpoint_path)
-        print(f"Saved checkpoint to {checkpoint_path}")
+            print(f"Saved checkpoint to {checkpoint_path}")
 
 average_loss = total_loss / len(loader)
 print(f"Epoch {epoch+1} Completed. Average Loss: {average_loss:.4f}\n")
