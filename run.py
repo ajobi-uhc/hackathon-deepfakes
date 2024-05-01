@@ -51,7 +51,8 @@ class VideoDataset(Dataset):
         video_path = f"{self.root_dir}/{video_filename}"
         label = self.dataframe.iloc[idx]['label_value']
         # Read video and extract frames
-        frames, _, _ = read_video(video_path, pts_unit='sec', start_pts=0, end_pts=10, output_format='TCHW')
+        frames = torch.load(video_path)
+        raise Exception(f"{frames.shape}")
         total_frames = len(frames)
         frame_indices = torch.linspace(0, total_frames - 1, steps=self.sequence_length).long()
         selected_frames = frames[frame_indices]
