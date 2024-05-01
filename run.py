@@ -17,6 +17,7 @@ from torch.optim.lr_scheduler import StepLR
 import wandb
 import torch
 from tqdm import tqdm
+import os
 
 DATASET_VIDEO_PATH = "../data/train_dataset"
 DATASET_METADATA_PATH = "../data/train_dataset/metadata.json"
