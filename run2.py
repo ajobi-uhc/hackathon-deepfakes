@@ -130,9 +130,6 @@ num_epochs = 1  # Example epoch count
 losses = []  # List to store all losses for visualization or further analysis
 save_interval = len(loader) // 10
 for epoch in range(num_epochs):
-    for batch_idx, (videos, labels) in progress_bar:
-        if batch_idx < start_batch_idx:
-            continue
     print(f"Epoch {epoch+1}/{num_epochs}")
     total_loss = 0.0
     num_batches = 0
@@ -141,6 +138,8 @@ for epoch in range(num_epochs):
     progress_bar = tqdm(enumerate(loader, start=start_batch_idx), total=len(loader), desc="Training", leave=False)
 
     for batch_idx, (videos, labels) in progress_bar:
+        if batch_idx < start_batch_idx:
+            continue  # Skip batches until the start index is reached
         videos = videos.to(device)  # [batch_size, seq_length, channels, height, width]
         labels = labels.to(device).float().unsqueeze(1)  # [batch_size, seq_length, 1]
         labels = labels.repeat(1, videos.size(1)).unsqueeze(-1)  # [batch_size, seq_length, 1]
