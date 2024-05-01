@@ -7,3 +7,4 @@ Pillow
 torchvision
 torchvideo
 timm
+wandb
